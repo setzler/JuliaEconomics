@@ -12,7 +12,7 @@ K=3
 
 genX = MvNormal(eye(K))
 X = rand(genX,N)
-X = transpose(X)
+X = X'
 X_noconstant = X
 constant = ones(N)
 X = [constant X]
@@ -20,12 +20,12 @@ X = [constant X]
 genEpsilon = Normal(0, 1)
 epsilon = rand(genEpsilon,N)
 trueParams = [0.1,0.5,-0.3,0.]
-Y = *(X,trueParams) + epsilon
+Y = X*trueParams + epsilon
 
 function loglike(rho,y,x)
     beta = rho[1:4]
     sigma2 = exp(rho[5])
-    residual = y-*(x,beta)
+    residual = y-x*beta
     dist = Normal(0, sigma2)
     contributions = logpdf(dist,residual)
     loglikelihood = sum(contributions)

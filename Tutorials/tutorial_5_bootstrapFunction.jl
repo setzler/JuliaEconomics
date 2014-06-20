@@ -13,20 +13,20 @@ K=10
 
 genX = MvNormal(eye(K))
 X = rand(genX,N)
-X = transpose(X)
+X = X'
 constant = ones(N)
 X = [constant X]
 genEpsilon = Normal(0, 1)
 epsilon = rand(genEpsilon,N)
 trueParams = [-K/2:K/2]*.02
-Y = *(X,trueParams) + epsilon
+Y = X*trueParams + epsilon
 params0 = [trueParams,1]
 
 
 function loglike(rho,x,y)
     beta = rho[1:K+1]
     sigma2 = exp(rho[K+2])
-    residual = y-*(x,beta)
+    residual = y-x*beta
     dist = Normal(0, sigma2)
     contributions = logpdf(dist,residual)
     loglikelihood = sum(contributions)
@@ -44,7 +44,7 @@ function bootstrapSamples(B)
         function wrapLoglike(rho)
             return loglike(rho,x,y)
         end
-        samples[b,:] = optimize(wrapLoglike,params0,method=:cg).minimum
+        samples[b,:] = optimize(wrapLoglike,params0,method=:nelder_mead).minimum
     end
     samples[:,K+2] = exp(samples[:,K+2])
     println("bye")
