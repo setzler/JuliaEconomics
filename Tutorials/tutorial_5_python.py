@@ -5,7 +5,7 @@
 
 import numpy as np
 from scipy.stats import multivariate_normal as mn
-from scipy.optimize import fmin
+from scipy.optimize import fmin_cg
 import multiprocessing as mp
 import time
 
@@ -44,7 +44,7 @@ def bootstrapSamples(B):
         y = Y[theIndex]
         def wrapLoglike(rho):
             return loglike(rho,x,y)
-        samples[b,:] = fmin(wrapLoglike,params0)
+        samples[b,:] = fmin_cg(wrapLoglike,params0)
     samples[:,K+1] = np.exp(samples[:,K+1])
     print "bye"
     return samples
@@ -54,9 +54,8 @@ b = 1000//4
 
 time0 = time.time()
 samples = bootstrapSamples(B)
-    = time.time() - time0
+time_1proc = time.time() - time0
 
-time0 = time.time()
 pool = mp.Pool(4)
 time0 = time.time()
 samples = pool.map(bootstrapSamples,[b,b,b,b])
