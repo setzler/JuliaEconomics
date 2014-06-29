@@ -42,7 +42,6 @@ function KalmanDGP(params)
             current_state = A*current_state + rand(MvNormal(V))
             iData[((t-1)*stateDim*obsDim+1):(t*stateDim*obsDim)] = C*current_state + rand(MvNormal(W))
         end
-        iData[(stateDim*obsDim*T+1):(stateDim*obsDim*T+1)] = anchor_int+sum(current_state.*anchor_coefs) + randn(1)
         # add individual to data
         data[i,:] = iData
     end
