@@ -2,30 +2,21 @@
 # JuliaEconomics.com
 # Tutorial 5: Parallel Processing in Julia: Bootstrapping the MLE
 
-srand(2)
 
+using DataFrames
 using Distributions
 using Optim
 
 
-N=1000
-K=10
+params0 = [.1,.2,.3,.4,.5]
+data = readtable("data.csv")
+N = size(data,1)
+Y = array(data[:Y])
+X = array(data[[:one,:X1,:X2,:X3]])
 
-genX = MvNormal(eye(K))
-X = rand(genX,N)
-X = X'
-constant = ones(N)
-X = [constant X]
-genEpsilon = Normal(0, 1)
-epsilon = rand(genEpsilon,N)
-trueParams = [-K/2:K/2]*.02
-Y = X*trueParams + epsilon
-params0 = [trueParams,1]
-
-
-function loglike(rho,x,y)
-    beta = rho[1:K+1]
-    sigma2 = exp(rho[K+2])
+function loglike(rho,y,x)
+    beta = rho[1:4]
+    sigma2 = exp(rho[5])+eps(Float64)
     residual = y-x*beta
     dist = Normal(0, sigma2)
     contributions = logpdf(dist,residual)
@@ -35,18 +26,17 @@ end
 
 function bootstrapSamples(B)
     println("hi")
-    M=convert(Int,N/2)
-    samples = zeros(B,K+2)
+    samples = zeros(B,5)
     for b=1:B
-        theIndex = randperm(N)[1:M]
-        x = X[theIndex,:]
-        y = Y[theIndex,:]
-        function wrapLoglike(rho)
-            return loglike(rho,x,y)
-        end
-        samples[b,:] = optimize(wrapLoglike,params0,method=:nelder_mead).minimum
-    end
-    samples[:,K+2] = exp(samples[:,K+2])
+		theIndex = sample(1:N,N)
+		x = X[theIndex,:]
+		y = Y[theIndex,:]
+		function wrapLoglike(rho)
+			return loglike(rho,y,x)
+		end
+		samples[b,:] = optimize(wrapLoglike,params0,method=:cg).minimum
+	end
+	samples[:,5] = exp(samples[:,5])
     println("bye")
     return samples
 end
