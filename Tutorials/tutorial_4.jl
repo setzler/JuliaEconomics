@@ -19,7 +19,7 @@ X = [constant X]
 
 genEpsilon = Normal(0, 1)
 epsilon = rand(genEpsilon,N)
-trueParams = [0.1,0.5,-0.3,0.]
+trueParams = [0.01,0.05,0.05,0.07]
 Y = X*trueParams + epsilon
 
 
@@ -44,7 +44,7 @@ function stepdown(MLE,bootSamples)
     K = length(MLE)
     tMLE = MLE
     bootstrapSE = std(bootSamples,1)
-    tNullDistribution = samples
+    tNullDistribution = bootSamples
     p = -ones(K)
     for i=1:K
         tMLE[i] = abs(tMLE[i]/bootstrapSE[i])
@@ -59,6 +59,7 @@ function stepdown(MLE,bootSamples)
         sort_index[(p.==sorted_p[j]) & (sort_index.<0)] = j:(j-1+num_ties)
     end
     for k=1:K
+    	current_index = [sort_index.>=k]
         stepdown_p[sort_index[k]] = mean(maximum(tNullDistribution[:,sort_index.>=k],2).>tMLE[sort_index[k]])
     end
     return ["single_pvalues"=>p,"stepdown_pvalues"=>stepdown_p,"Holm_pvalues"=>Holm(p)]
@@ -90,12 +91,12 @@ MLE = optimum.minimum
 MLE[5] = exp(MLE[5])
 
 
-M=convert(Int,N/2)
+
 B=1000
 samples = zeros(B,5)
 
 for b=1:B
-    theIndex = randperm(N)[1:M]
+    theIndex = sample(1:N,N)
     x = X[theIndex,:]
     y = Y[theIndex,:]
     function wrapLoglike(rho)
