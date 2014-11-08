@@ -19,12 +19,12 @@ X = [constant X]
 
 genEpsilon = Normal(0, 1)
 epsilon = rand(genEpsilon,N)
-trueParams = [0.1,0.5,-0.3,0.]
+trueParams = [0.01,0.05,0.05,0.07]
 Y = X*trueParams + epsilon
 
 function loglike(rho,y,x)
     beta = rho[1:4]
-    sigma2 = exp(rho[5])
+    sigma2 = exp(rho[5])+eps(Float64)
     residual = y-x*beta
     dist = Normal(0, sigma2)
     contributions = logpdf(dist,residual)
@@ -42,12 +42,12 @@ MLE = optimum.minimum
 MLE[5] = exp(MLE[5])
 
 
-M=convert(Int,N/2)
+
 B=1000
 samples = zeros(B,5)
 
 for b=1:B
-    theIndex = randperm(N)[1:M]
+    theIndex = sample(1:N,N)
     x = X[theIndex,:]
     y = Y[theIndex,:]
     function wrapLoglike(rho)
