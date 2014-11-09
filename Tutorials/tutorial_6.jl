@@ -12,10 +12,9 @@ function unpackParams(params)
     place += stateDim^2
     V = diagm(exp(params[(place+1):(place+stateDim)]))
     place += stateDim
-    Cparams = params[(place+1):(place+stateDim*(obsDim-1))]
     C = zeros(stateDim*obsDim,stateDim)
     for j in [1:stateDim]
-            C[(1+obsDim*(j-1)):obsDim*j,j] = [1,Cparams[(1+(obsDim-1)*(j-1)):(obsDim-1)*j]]
+            C[(1+obsDim*(j-1)):obsDim*j,j] = [1,params[(place+1+(obsDim-1)*(j-1)):(place+(obsDim-1)*(j))]]
     end
     place += (obsDim-1)*stateDim
     W = diagm(exp(params[(place+1):(place+obsDim*stateDim)]))
@@ -79,12 +78,12 @@ function indivKF(params,init_exp,init_var,i)
     # initialization
     post_exp = init_exp
     post_var = init_var
-    init_obs = matrix([iData[obsDict[1]]])'
+    init_obs = array([iData[obsDict[1]]])'
     dist = MvNormal(eye(length(init_obs)))
     log_like=logpdf(dist,init_obs)
     for t = 1:(T-1)
         # predict and update
-        new_obs = matrix([iData[obsDict[t+1]]])'
+        new_obs = array([iData[obsDict[t+1]]])'
         new_post = incrementKF(params,post_exp,post_var,new_obs)
         # replace
         post_exp = new_post["post_exp"]
@@ -126,8 +125,8 @@ params0 = [1.,0.,0.,1.,0.,0.,.5,-.5,.5,-.5,0.,0.,0.,0.,0.,0.]
 
 data=KalmanDGP(params0)
 data = DataFrame(data)
-colnames!(data,["one_1","one_2","one_3","one_4","one_5","one_6","two_1","two_2","two_3","two_4","two_5","two_6","three_1","three_2","three_3","three_4","three_5","three_6","four_1","four_2","four_3","four_4","four_5","four_6","outcome"])
-obsDict = {["one_1","one_2","one_3","one_4","one_5","one_6"],["two_1","two_2","two_3","two_4","two_5","two_6"],["three_1","three_2","three_3","three_4","three_5","three_6"],["four_1","four_2","four_3","four_4","four_5","four_6"]}
+names!(data,[:one_1,:one_2,:one_3,:one_4,:one_5,:one_6,:two_1,:two_2,:two_3,:two_4,:two_5,:two_6,:three_1,:three_2,:three_3,:three_4,:three_5,:three_6,:four_1,:four_2,:four_3,:four_4,:four_5,:four_6,:outcome])
+obsDict = {[:one_1,:one_2,:one_3,:one_4,:one_5,:one_6],[:two_1,:two_2,:two_3,:two_4,:two_5,:two_6],[:three_1,:three_2,:three_3,:three_4,:three_5,:three_6],[:four_1,:four_2,:four_3,:four_4,:four_5,:four_6]}
 
 tic()
 MLE = optimize(wrapLoglike,params0,method=:cg,ftol=1e-8)
