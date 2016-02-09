@@ -1,10 +1,11 @@
 #############################################################################
 ###### Lecture: Introduction to Structural Econometrics in Julia ############
-###### 2. Data generation, management, and regression visualization #########
+###### 3. Data generation, management, and regression visualization #########
 ###### Bradley Setzler, Department of Economics, University of Chicago ######
 #############################################################################
 
 ####### Set Simulation Parameters #########
+cd("/Users/bradley/JuliaEconomics/IntroStructuralEstimation/")
 srand(123)           # set the seed to ensure reproducibility
 N = 1000             # set number of agents in economy
 gamma = .5           # set Cobb-Douglas relative preference for consumption
