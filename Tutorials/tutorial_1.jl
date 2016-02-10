@@ -1,6 +1,7 @@
 # Bradley J. Setzler
 # JuliaEconomics.com
 # Tutorial 1: Introductory Example: Ordinary Least Squares (OLS) Estimation in Julia
+# Passed test on Julia 0.4
 
 srand(2)
 

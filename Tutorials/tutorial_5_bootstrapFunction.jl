@@ -1,7 +1,7 @@
 # Bradley J. Setzler
 # JuliaEconomics.com
 # Tutorial 5: Parallel Processing in Julia: Bootstrapping the MLE
-
+# Passed test on Julia 0.4
 
 using DataFrames
 using Distributions

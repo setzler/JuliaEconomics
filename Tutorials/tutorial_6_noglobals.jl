@@ -1,6 +1,7 @@
 # Bradley J. Setzler
 # JuliaEconomics.com
-# Tutorial 6: Kalman Filter for Panel Data and MLE in Julia, Part 1
+# Tutorial 6: Kalman Filter for Panel Data and MLE in Julia
+# Passed test on Julia 0.4, but is now much slower
 
 using DataFrames
 using Distributions
@@ -79,12 +80,12 @@ function indivKF(params,df,obsDict,init_exp,init_var,stateDim,obsDim,T,i)
     # initialization
     post_exp = init_exp
     post_var = init_var
-    init_obs = matrix([iData[obsDict[1]]])'
+    init_obs = array(iData[obsDict[1]])'
     dist = MvNormal(eye(length(init_obs)))
     log_like=logpdf(dist,init_obs)
     for t = 1:(T-1)
         # predict and update
-        new_obs = matrix([iData[obsDict[t+1]]])'
+        new_obs = array(iData[obsDict[t+1]])'
         new_post = incrementKF(params,post_exp,post_var,new_obs,stateDim,obsDim)
         # replace
         post_exp = new_post["post_exp"]
@@ -128,8 +129,8 @@ function estimateKF()
     init_var = eye(stateDim)
     data=KalmanDGP(params0,stateDim,obsDim,N,T,init_exp,init_var)
     data = DataFrame(data)
-    colnames!(data,["one_1","one_2","one_3","one_4","one_5","one_6","two_1","two_2","two_3","two_4","two_5","two_6","three_1","three_2","three_3","three_4","three_5","three_6","four_1","four_2","four_3","four_4","four_5","four_6","outcome"])
-    obsDict = {["one_1","one_2","one_3","one_4","one_5","one_6"],["two_1","two_2","two_3","two_4","two_5","two_6"],["three_1","three_2","three_3","three_4","three_5","three_6"],["four_1","four_2","four_3","four_4","four_5","four_6"]}
+    names!(data, [:one_1,:one_2,:one_3,:one_4,:one_5,:one_6,:two_1,:two_2,:two_3,:two_4,:two_5,:two_6,:three_1,:three_2,:three_3,:three_4,:three_5,:three_6,:four_1,:four_2,:four_3,:four_4,:four_5,:four_6,:outcome])
+    obsDict = {[:one_1,:one_2,:one_3,:one_4,:one_5,:one_6],[:two_1,:two_2,:two_3,:two_4,:two_5,:two_6],[:three_1,:three_2,:three_3,:three_4,:three_5,:three_6],[:four_1,:four_2,:four_3,:four_4,:four_5,:four_6]}
 
     function wrapLoglike(params)
         print("current parameters: ",params)
@@ -146,4 +147,7 @@ function estimateKF()
 
 end
 
+tic()
 optimParams0 = estimateKF()
+toc()
+

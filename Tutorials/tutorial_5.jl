@@ -1,6 +1,7 @@
 # Bradley J. Setzler
 # JuliaEconomics.com
 # Tutorial 5: Parallel Processing in Julia: Bootstrapping the MLE
+# Passed test on Julia 0.4
 
 srand(2)
 
@@ -27,9 +28,7 @@ data = DataFrame(hcat(Y,X))
 names!(data,[:Y,:one,:X1,:X2,:X3])
 writetable("data.csv",data)
 
-
-
-addprocs(4)
+addprocs(3)
 require("tutorial_5_bootstrapFunction.jl")
 B=1000
 b=250

@@ -1,6 +1,7 @@
 # Bradley J. Setzler
 # JuliaEconomics.com
 # Tutorial 3: Bootstrapping and Non-parametric p-values in Julia
+# Passed test on Julia 0.4
 
 srand(2)
 

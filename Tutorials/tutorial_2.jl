@@ -1,6 +1,7 @@
 # Bradley J. Setzler
 # JuliaEconomics.com
 # Tutorial 2: Maximum Likelihood Estimation (MLE) in Julia: The OLS Example
+# Passed test on Julia 0.4
 
 srand(2)
 
@@ -32,14 +33,11 @@ function loglike(rho)
     return -loglikelihood
 end
 
-
-
 params0 = [.1,.2,.3,.4,.5]
 optimum = optimize(loglike,params0,method=:cg)
 MLE = optimum.minimum
 MLE[5] = exp(MLE[5])
 println(MLE)
-
 
 optimum = optimize(loglike,params0,method=:nelder_mead)
 MLE = optimum.minimum
