@@ -33,7 +33,7 @@ end
 numReps = 12                                         # set number of times to simulate epsilon
 gamma_MSM, tau_MSM = MSM()                           # Perform MSM
 
-####### Minimize Sum of Squared Residuals in Parallel #########
+####### Compute Numerical Derivative of Simulated Demand for Consumption #########
 
 function Dconsump_Dtau(g,t,h)
   opt_plus_h = hh_constrained_opt(g,t+h,array(df[:wage]),array(df[:epsilon]))
@@ -41,4 +41,4 @@ function Dconsump_Dtau(g,t,h)
   (mean(opt_plus_h[:c_opt]) - mean(opt_minus_h[:c_opt]))/(2*h)
 end
 
-barpsi_MSM = Dconsump_Dtau(gamma_MSM,tau_MSM,.001)
+barpsi_MSM = Dconsump_Dtau(gamma_MSM,tau_MSM,.0001)
