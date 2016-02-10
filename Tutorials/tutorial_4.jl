@@ -1,6 +1,7 @@
 # Bradley J. Setzler
 # JuliaEconomics.com
 # Tutorial 4: Stepdown p-values for Multiple Hypothesis Testing in Julia
+# Passed test on Julia 0.4
 
 srand(2)
 
