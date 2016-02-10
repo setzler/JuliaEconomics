@@ -29,7 +29,7 @@ end
 ####### Define Simulated Moments for Randomly Generated Epsilon #########
 
 function sim_moments(params)
-  this_epsilon = array(df[:epsilon])                                          # randn(N)                                                     # draw random epsilon
+  this_epsilon = randn(N)                                                     # draw random epsilon
   ggamma,ttau = params                                                        # extract gamma and tau from vector
   this_demand = hh_constrained_opt(ggamma,ttau,array(df[:wage]),this_epsilon) # obtain demand for c and l
   c_moment = mean( this_demand[:c_opt] ) - mean( df[:consump] )               # compute empirical moment for c
